@@ -14,14 +14,14 @@
             <p class="text-muted">Please upload a valid JSON file to proceed.</p>
             <form method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3">
                 <div class="input-group">
-                    <input type="file" class="form-control" id="jsonFile" name="jsonFile" accept=".json" required />
+                    <input type="file" class="form-control" id="jsonFile" name="jsonFile" accept=".lic" required />
                     <button type="submit" class="btn btn-primary">Upload</button>
                 </div>
             </form>
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(Model.MachineID))
+    @if (Model.MachineKey != null && Model.MachineKey.Count() > 0)
     {
         <!-- Review and Fill Details Section -->
         <div class="card shadow-sm mb-5">
@@ -33,20 +33,28 @@
                         <legend class="text-info">Machine Info</legend>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="MachineID" class="form-label">Machine ID</label>
-                                <input id="MachineID" name="MachineID" class="form-control" value="@Model.MachineID" readonly />
+                                <label class="form-label">Machine ID(s)</label>
+                                <div id="machineID-container">
+                                    @for (int i = 0; i < Model.MachineKey.Count(); i++)
+                                    {
+                                        <div class="input-group mb-2">
+                                            <input required for="MachineKey[@i]" type="text" name="MachineKey[@i]" class="form-control" value="@Model.MachineKey[i]" readonly />
+                                        </div>
+                                    }
+                                </div>
+                                <button type="button" id="add-machine-btn" class="btn btn-primary">Add Machine</button>
                             </div>
                             <div class="col-md-6">
                                 <label for="DatabaseName" class="form-label">Database Name</label>
                                 <input id="DatabaseName" name="DatabaseName" class="form-control" value="@Model.DatabaseName" readonly />
                             </div>
                             <div class="col-md-6">
-                                <label for="ServerName" class="form-label">Server Name</label>
-                                <input id="ServerName" name="ServerName" class="form-control" value="@Model.ServerName" readonly />
+                                <label for="DatabaseServer" class="form-label">Server Name</label>
+                                <input id="DatabaseServer" name="DatabaseServer" class="form-control" value="@Model.DatabaseServer" readonly />
                             </div>
                             <div class="col-md-6">
-                                <label for="DatabaseServerName" class="form-label">Database Server Name</label>
-                                <input id="DatabaseServerName" name="DatabaseServerName" class="form-control" value="@Model.DatabaseServerName" readonly />
+                                <label for="Module" class="form-label">Module</label>
+                                <input id="Module" name="Module" class="form-control" value="@Model.Module" readonly />
                             </div>
                         </div>
                     </fieldset>
@@ -56,16 +64,48 @@
                         <legend class="text-info">License Details</legend>
                         <div class="row g-3">
                             <div class="col-md-3">
-                                <label for="NumberOfUsers" class="form-label">Number of Users</label>
-                                <input type="number" id="NumberOfUsers" name="NumberOfUsers" class="form-control" placeholder="Enter number of users" required />
+                                <label for="CompanyName" class="form-label">Company Name</label>
+                                <input type="text" id="CompanyName" name="CompanyName" class="form-control" value="@Model.CompanyName" placeholder="Enter company name" required />
                             </div>
+
                             <div class="col-md-3">
-                                <label for="ExpirationDate" class="form-label">Expiration Date</label>
-                                <input type="date" id="ExpirationDate" name="ExpirationDate" class="form-control" required />
+                                <label for="NumberOfUsers" class="form-label">Number of Users</label>
+                                <input type="number" id="NumberOfUsers" name="NumberOfUsers" class="form-control" value="@Model.NumberOfUsers" placeholder="Enter number of users" required />
                             </div>
-                            <div class="col-3">
-                                <label for="Module" class="form-label">Module</label>
-                                <input type="text" id="Module" name="Module" class="form-control" placeholder="Enter module name" required />
+
+                            <div class="col-md-3">
+                                <label for="NumberOfAdminUsers" class="form-label">Admin Users</label>
+                                <input type="number" id="NumberOfAdminUsers" name="NumberOfAdminUsers" class="form-control" value="@Model.NumberOfAdminUsers" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="NumberOfUnitUsers" class="form-label">Unit Users</label>
+                                <input type="number" id="NumberOfUnitUsers" name="NumberOfUnitUsers" class="form-control" value="@Model.NumberOfUnitUsers" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="NumberOfLocationUsers" class="form-label">Location Users</label>
+                                <input type="number" id="NumberOfLocationUsers" name="NumberOfLocationUsers" class="form-control" value="@Model.NumberOfLocationUsers" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="NumberOfEndUsers" class="form-label">End Users</label>
+                                <input type="number" id="NumberOfEndUsers" name="NumberOfEndUsers" class="form-control" value="@Model.NumberOfEndUsers" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="NumberOfLocations" class="form-label">Number of Locations</label>
+                                <input type="number" id="NumberOfLocations" name="NumberOfLocations" class="form-control" value="@Model.NumberOfLocations" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="NumberOfAssets" class="form-label">Number of Assets</label>
+                                <input type="number" id="NumberOfAssets" name="NumberOfAssets" class="form-control" value="@Model.NumberOfAssets" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="ExpiryDate" class="form-label">Expiration Date</label>
+                                <input type="date" id="ExpiryDate" name="ExpiryDate" class="form-control" value="@Model.ExpiryDate" required />
                             </div>
                         </div>
                     </fieldset>
@@ -85,3 +125,21 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('add-machine-btn').addEventListener('click', function () {
+            var container = document.getElementById('machineID-container');
+            var index = container.children.length;
+            var newElement = document.createElement('div');
+            newElement.classList.add('input-group', 'mb-2');
+            newElement.innerHTML = `<input required type="text" name="MachineKey[${index}]" class="form-control" />
+                                    <button type="button" class="btn btn-danger remove-btn" onclick="removeMachine(this)">Remove</button>`;
+            container.appendChild(newElement);
+        });
+
+        function removeMachine(button) {
+            button.parentElement.remove();
+        }
+    </script>
+}

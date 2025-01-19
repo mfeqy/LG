@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text;
 using System.Text.Json;
+using Youxel.Check.LicensesGenerator.Enums;
+using Youxel.Check.LicensesGenerator.Helpers;
+using Youxel.Check.LicensesGenerator.Models;
 
 namespace Youxel.Check.LicensesGenerator.Pages.Licenses
 {
@@ -8,22 +12,43 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
     public class LicensePageModel : PageModel
     {
         [BindProperty]
-        public string MachineID { get; set; } = default!;
+        public LicenseModule Module { get; set; } = default!;
+
         [BindProperty]
-        public string DatabaseName { get; set; } = default!;
+        public string CompanyName { get; set; } = string.Empty;
+
         [BindProperty]
-        public string ServerName { get; set; } = default!;
+        public int? NumberOfAdminUsers { get; set; }
+
         [BindProperty]
-        public string DatabaseServerName { get; set; } = default!;
+        public int? NumberOfUnitUsers { get; set; }
+
+        [BindProperty]
+        public int? NumberOfLocationUsers { get; set; }
+
+        [BindProperty]
+        public int? NumberOfEndUsers { get; set; }
 
         [BindProperty]
         public int NumberOfUsers { get; set; }
-        [BindProperty]
-        public DateTime ExpirationDate { get; set; }
-        [BindProperty]
-        public string Module { get; set; } = default!;
 
-        public string LicenseKey { get; private set; } = default!;
+        [BindProperty]
+        public int NumberOfLocations { get; set; }
+
+        [BindProperty]
+        public int NumberOfAssets { get; set; }
+
+        [BindProperty]
+        public string ExpiryDate { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string DatabaseServer { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string DatabaseName { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string[] MachineKey { get; set; } = Array.Empty<string>();
 
         public async Task<IActionResult> OnPostAsync(IFormFile jsonFile)
         {
@@ -33,19 +58,25 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
                 return Page();
             }
 
-            using var stream = jsonFile.OpenReadStream();
-            var data = await JsonSerializer.DeserializeAsync<MachineInfo>(stream);
+            string fileContent;
+            using (var stream = new MemoryStream())
+            {
+                await jsonFile.CopyToAsync(stream);
+                var fileBytes = stream.ToArray();
+                fileContent = Encoding.UTF8.GetString(fileBytes);
+            }
 
-            if (data == null)
+            if (fileContent == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid JSON content.");
                 return Page();
             }
 
-            MachineID = data.MachineID;
-            DatabaseName = data.DatabaseName;
-            ServerName = data.ServerName;
-            DatabaseServerName = data.DatabaseServerName;
+            License licenseRequest = LicenseHelper.GetLicense(fileContent);
+            MachineKey = licenseRequest.MachineKey;
+            DatabaseName = licenseRequest.DatabaseName;
+            DatabaseServer = licenseRequest.DatabaseServer;
+            Module = licenseRequest.Module;
 
             return Page();
         }
@@ -55,23 +86,28 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
             if (!ModelState.IsValid)
                 return Page();
 
-            LicenseKey = GenerateLicenseKey();
+            var license = new License
+            {
+                Module = Module,
+                CompanyName = CompanyName,
+                NumberOfAdminUsers = NumberOfAdminUsers,
+                NumberOfUnitUsers = NumberOfUnitUsers,
+                NumberOfLocationUsers = NumberOfLocationUsers,
+                NumberOfEndUsers = NumberOfEndUsers,
+                NumberOfUsers = NumberOfUsers,
+                NumberOfLocations = NumberOfLocations,
+                NumberOfAssets = NumberOfAssets,
+                ExpiryDate = ExpiryDate,
+                DatabaseServer = DatabaseServer,
+                DatabaseName = DatabaseName,
+                CreationDate = DateTime.Now,
+                MachineKey = MachineKey
+            };
 
-            return RedirectToPage("LicenseResult", new { LicenseKey });
-        }
+            var licenseJson = JsonSerializer.Serialize(license);
+            var licenseKey = LicenseHelper.GenerateLicenseKey(licenseJson);
 
-        private string GenerateLicenseKey()
-        {
-            // License key logic here
-            return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-        }
-
-        public class MachineInfo
-        {
-            public string MachineID { get; set; } = default!;
-            public string DatabaseName { get; set; } = default!;
-            public string ServerName { get; set; } = default!;
-            public string DatabaseServerName { get; set; } = default!;
+            return RedirectToPage("LicenseResult", new { licenseKey });
         }
     }
 }

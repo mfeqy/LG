@@ -27,7 +27,6 @@ app.Use(async (context, next) =>
 
     if (string.IsNullOrWhiteSpace(authHeader))
     {
-        // Request authentication if no Authorization header is provided
         context.Response.Headers["WWW-Authenticate"] = "Basic";
         context.Response.StatusCode = 401;
         await context.Response.WriteAsync("Authentication is required.");
@@ -48,8 +47,14 @@ app.Use(async (context, next) =>
             throw new UnauthorizedAccessException();
         }
 
-        // Proceed to the next middleware if authentication succeeds
-        await next.Invoke();
+        // Redirect only if the request is for the root ("/"), otherwise continue normal execution
+        if (context.Request.Path == "/")
+        {
+            context.Response.Redirect("Licenses/LicensePage");
+            return; // Prevent further middleware execution
+        }
+
+        await next(context); // Explicitly pass context
     }
     catch
     {
