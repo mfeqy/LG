@@ -1,0 +1,87 @@
+﻿@page
+@model LicensePageModel
+@{
+    ViewData["Title"] = "License Key Generator";
+}
+
+<div class="container py-5">
+    <h1 class="text-center mb-5 text-primary">🔑 License Key Generator</h1>
+
+    <!-- Upload JSON File Section -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <h5 class="card-title text-secondary">Step 1: Upload JSON File</h5>
+            <p class="text-muted">Please upload a valid JSON file to proceed.</p>
+            <form method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3">
+                <div class="input-group">
+                    <input type="file" class="form-control" id="jsonFile" name="jsonFile" accept=".json" required />
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.MachineID))
+    {
+        <!-- Review and Fill Details Section -->
+        <div class="card shadow-sm mb-5">
+            <div class="card-body">
+                <h5 class="card-title text-secondary">Step 2: Review and Complete Details</h5>
+                <p class="text-muted">Verify the machine details and fill in the license information below.</p>
+                <form method="post" asp-page-handler="GenerateLicense" class="d-flex flex-column gap-4">
+                    <fieldset>
+                        <legend class="text-info">Machine Info</legend>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="MachineID" class="form-label">Machine ID</label>
+                                <input id="MachineID" name="MachineID" class="form-control" value="@Model.MachineID" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="DatabaseName" class="form-label">Database Name</label>
+                                <input id="DatabaseName" name="DatabaseName" class="form-control" value="@Model.DatabaseName" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ServerName" class="form-label">Server Name</label>
+                                <input id="ServerName" name="ServerName" class="form-control" value="@Model.ServerName" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="DatabaseServerName" class="form-label">Database Server Name</label>
+                                <input id="DatabaseServerName" name="DatabaseServerName" class="form-control" value="@Model.DatabaseServerName" readonly />
+                            </div>
+                        </div>
+                    </fieldset>
+
+
+                    <fieldset>
+                        <legend class="text-info">License Details</legend>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="NumberOfUsers" class="form-label">Number of Users</label>
+                                <input type="number" id="NumberOfUsers" name="NumberOfUsers" class="form-control" placeholder="Enter number of users" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="ExpirationDate" class="form-label">Expiration Date</label>
+                                <input type="date" id="ExpirationDate" name="ExpirationDate" class="form-control" required />
+                            </div>
+                            <div class="col-3">
+                                <label for="Module" class="form-label">Module</label>
+                                <input type="text" id="Module" name="Module" class="form-control" placeholder="Enter module name" required />
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-success mt-3 d-block mx-auto" style="width: 20%;">Generate Key</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <!-- License Key Display Section -->
+    @if (TempData["LicenseKey"] != null)
+    {
+        <div class="alert alert-success text-center">
+            <h4>🎉 License Key Generated Successfully!</h4>
+            <p class="mb-0"><strong>@TempData["LicenseKey"]</strong></p>
+        </div>
+    }
+</div>

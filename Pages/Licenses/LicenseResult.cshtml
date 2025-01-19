@@ -1,0 +1,16 @@
+﻿@page
+@model LicenseResultModel
+@{
+    ViewData["Title"] = "License Key Result";
+}
+
+<div class="container py-5">
+    <h1 class="text-center text-success">🎉 License Key Generated!</h1>
+    <div class="alert alert-primary text-center">
+        <h4>Your License Key:</h4>
+        <p class="fs-4"><strong>@Model.LicenseKey</strong></p>
+    </div>
+    <div class="text-center mt-4">
+        <a asp-page="Licenses/LicensePage" class="btn btn-secondary">Generate Another License</a>
+    </div>
+</div>
