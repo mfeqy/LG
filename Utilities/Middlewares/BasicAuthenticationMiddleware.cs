@@ -38,7 +38,7 @@
                 // Redirect only if the request is for the root ("/"), otherwise continue normal execution
                 if (context.Request.Path == "/")
                 {
-                    context.Response.Redirect("Licenses/LicensePage");
+                    context.Response.Redirect("Licenses/Index");
                     return; // Prevent further middleware execution
                 }
 
