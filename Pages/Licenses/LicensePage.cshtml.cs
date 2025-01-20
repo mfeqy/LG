@@ -2,15 +2,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text;
 using System.Text.Json;
-using Youxel.Check.LicensesGenerator.Enums;
-using Youxel.Check.LicensesGenerator.Helpers;
-using Youxel.Check.LicensesGenerator.Models;
+using Youxel.Check.LicensesGenerator.Domain.Entities;
+using Youxel.Check.LicensesGenerator.Domain.Enums;
+using Youxel.Check.LicensesGenerator.Domain.Models;
+using Youxel.Check.LicensesGenerator.Infrastructure.Repositories;
+using Youxel.Check.LicensesGenerator.Utilities.Helpers;
 
 namespace Youxel.Check.LicensesGenerator.Pages.Licenses
 {
 
     public class LicensePageModel : PageModel
     {
+        private readonly ILicensesRepository _licenseRepository;
+        public LicensePageModel(ILicensesRepository licenseRepository)
+        {
+            _licenseRepository = licenseRepository;
+        }
+
         [BindProperty]
         public LicenseModule Module { get; set; } = default!;
 
@@ -72,7 +80,7 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
                 return Page();
             }
 
-            License licenseRequest = LicenseHelper.GetLicense(fileContent);
+            var licenseRequest = LicenseHelper.GetLicense(fileContent);
             MachineKey = licenseRequest.MachineKey;
             DatabaseName = licenseRequest.DatabaseName;
             DatabaseServer = licenseRequest.DatabaseServer;
@@ -81,12 +89,12 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
             return Page();
         }
 
-        public IActionResult OnPostGenerateLicense()
+        public async Task<IActionResult> OnPostGenerateLicense()
         {
             if (!ModelState.IsValid)
                 return Page();
 
-            var license = new License
+            var licenseVm = new LicenseVM
             {
                 Module = Module,
                 CompanyName = CompanyName,
@@ -104,8 +112,10 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
                 MachineKey = MachineKey
             };
 
-            var licenseJson = JsonSerializer.Serialize(license);
+            var licenseJson = JsonSerializer.Serialize(licenseVm);
             var licenseKey = LicenseHelper.GenerateLicenseKey(licenseJson);
+
+            await _licenseRepository.CreateLicenseAsync(License.Create(licenseVm, licenseKey));
 
             return RedirectToPage("LicenseResult", new { licenseKey });
         }

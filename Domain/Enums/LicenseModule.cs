@@ -1,4 +1,4 @@
-﻿namespace Youxel.Check.LicensesGenerator.Enums;
+﻿namespace Youxel.Check.LicensesGenerator.Domain.Enums;
 
 public enum LicenseModule
 {

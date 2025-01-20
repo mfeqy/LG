@@ -1,4 +1,4 @@
-﻿namespace Youxel.Check.LicensesGenerator.Middlewares
+﻿namespace Youxel.Check.LicensesGenerator.Utilities.Middlewares
 {
     public class BasicAuthenticationMiddleware
     {

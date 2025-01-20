@@ -1,0 +1,105 @@
+﻿@page
+@model Youxel.Check.LicensesGenerator.Pages.Licenses.IndexModel
+@{
+    ViewData["Title"] = "License List";
+}
+
+<h1 class="text-center mb-5 text-primary">Licenses</h1>
+
+<!-- Search Bar -->
+<div class="row mb-3">
+    <div class="col-md-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search here..." onkeyup="searchTable()">
+    </div>
+    <div class="col-md-6">
+        <button class="btn btn-primary" onclick="searchTable()">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
+
+    <div class="col-md-3 text-end">
+        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+            <a asp-page="Create" class="btn btn-success" title="Create New License">
+                <i class="bi bi-plus-lg"></i>
+            </a>
+            <a asp-page="LicensePage" class="btn btn-success" title="Upload License Request">
+                <i class="bi bi-upload"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="table-responsive">
+    <table class="table table-hover table-bordered text-center">
+        <thead class="table-light">
+            <tr>
+                <th>Company Name</th>
+                <th>Module</th>
+                <th>Users Number</th>
+                <th>Expiry Date</th>
+                <th>Created At</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="licenseTable">
+            @if (Model?.Licenses?.Any() == true)
+            {
+                @foreach (var license in Model.Licenses)
+                {
+                    <tr>
+                        <td>@license.CompanyName</td>
+                        <td>@license.Module</td>
+                        <td>@license.NumberOfUsers</td>
+                        <td>@license.ExpiryDate.ToString("dd MMM yyyy")</td>
+                        <td>@license.CreationDate.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @* <a asp-page="Details" asp-route-id="@license.Id" class="btn btn-outline-info btn-sm" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a> *@
+                            <a asp-page="Edit" asp-route-id="@license.Id" class="btn btn-outline-warning btn-sm" title="Edit">
+                                <i class="bi bi-pen"></i>
+                            </a>
+                            <a asp-page="Delete" asp-route-id="@license.Id" class="btn btn-outline-danger btn-sm" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No licenses found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- JavaScript for Search -->
+<script>
+    function searchTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("licenseTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td1 = tr[i].getElementsByTagName("td")[0]; // Company Name
+            td2 = tr[i].getElementsByTagName("td")[1]; // Module
+            td2 = tr[i].getElementsByTagName("td")[3]; // Expiration Date
+            if (td1 || td2) {
+                txtValue1 = td1.textContent || td1.innerText;
+                txtValue2 = td2.textContent || td2.innerText;
+                if (txtValue1.toUpperCase().indexOf(filter) > -1 || txtValue2.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

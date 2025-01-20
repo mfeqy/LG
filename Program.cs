@@ -1,11 +1,19 @@
-using Youxel.Check.LicensesGenerator.Middlewares;
+using Microsoft.EntityFrameworkCore;
+using Youxel.Check.LicensesGenerator.Infrastructure.DependencyInjection;
+using Youxel.Check.LicensesGenerator.Utilities.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+builder.Services.AddContext(builder.Configuration);
+builder.Services.AddServices();
+
 var app = builder.Build();
+
+// Automatically apply migrations
+await app.MigrateAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

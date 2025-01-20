@@ -1,0 +1,97 @@
+﻿@page "{id:guid}"
+@using Youxel.Check.LicensesGenerator.Domain.Enums
+@model Youxel.Check.LicensesGenerator.Pages.Licenses.EditModel
+@{
+    ViewData["Title"] = "Edit License";
+}
+
+<h2 class="mb-4">Edit License</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="License.Id" />
+    <input type="hidden" asp-for="License.CreationDate" />
+
+    <!-- License Key (Large Text Area) -->
+    <div class="mb-3">
+        <label class="form-label">License Key</label>
+        <textarea asp-for="License.LicenseKey" class="form-control" rows="4" style="resize: vertical;" readonly></textarea>
+        <small class="text-muted">License Key is read-only and cannot be modified.</small>
+    </div>
+
+    <div class="row">
+        <!-- Company Name -->
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Company Name</label>
+            <input asp-for="License.CompanyName" class="form-control" required />
+        </div>
+
+        <!-- Module -->
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Module</label>
+            <select asp-for="License.Module" asp-items="Html.GetEnumSelectList<LicenseModule>()" class="form-select"></select>
+        </div>
+
+        <!-- Expiry Date -->
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Expiry Date</label>
+            <input asp-for="License.ExpiryDate" type="date" class="form-control" required />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Total Users</label>
+            <input asp-for="License.NumberOfUsers" type="number" class="form-control" required />
+        </div>
+    </div>
+
+
+    <!-- Users Section -->
+    <div class="row">
+        <div class="col-md-3">
+            <label class="form-label">Admin Users</label>
+            <input asp-for="License.NumberOfAdminUsers" type="number" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Unit Users</label>
+            <input asp-for="License.NumberOfUnitUsers" type="number" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Location Users</label>
+            <input asp-for="License.NumberOfLocationUsers" type="number" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">End Users</label>
+            <input asp-for="License.NumberOfEndUsers" type="number" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-md-3">
+            <label class="form-label">Total Locations</label>
+            <input asp-for="License.NumberOfLocations" type="number" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Total Assets</label>
+            <input asp-for="License.NumberOfAssets" type="number" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Database Server</label>
+            <input asp-for="License.DatabaseServer" class="form-control" required />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Database Name</label>
+            <input asp-for="License.DatabaseName" class="form-control" required />
+        </div>
+    </div>
+
+    <!-- Machine Key (Array) -->
+    <div class="mb-3">
+        <label class="form-label">Machine Key(s)</label>
+        <textarea asp-for="MachineKeyString" class="form-control" rows="3" placeholder="Enter Machine Keys, separated by commas"></textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
