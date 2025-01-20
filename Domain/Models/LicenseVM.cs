@@ -1,8 +1,8 @@
-﻿using Youxel.Check.LicensesGenerator.Enums;
+﻿using Youxel.Check.LicensesGenerator.Domain.Enums;
 
-namespace Youxel.Check.LicensesGenerator.Models;
+namespace Youxel.Check.LicensesGenerator.Domain.Models;
 
-public class License
+public class LicenseVM
 {
     public LicenseModule Module { get; set; }
     public string CompanyName { get; set; } = string.Empty;

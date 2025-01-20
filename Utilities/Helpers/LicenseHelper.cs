@@ -3,10 +3,10 @@ using System.Security.Cryptography;
 using System.Security;
 using System.Text;
 using System.Text.Json;
-using Youxel.Check.LicensesGenerator.Models;
 using System.Text.Json.Serialization;
+using Youxel.Check.LicensesGenerator.Domain.Models;
 
-namespace Youxel.Check.LicensesGenerator.Helpers;
+namespace Youxel.Check.LicensesGenerator.Utilities.Helpers;
 
 public static class LicenseHelper
 {
@@ -38,7 +38,7 @@ public static class LicenseHelper
         }
     }
 
-    public static License GetLicense(string data)
+    public static LicenseVM GetLicense(string data)
     {
         if (string.IsNullOrEmpty(data))
             throw new ArgumentException("Message and key cannot be null or empty.", nameof(data));
@@ -46,7 +46,7 @@ public static class LicenseHelper
         try
         {
             var decodedLicenseRequest = DecodeRSA(data);
-            var license = JsonSerializer.Deserialize<License>(decodedLicenseRequest, new JsonSerializerOptions
+            var license = JsonSerializer.Deserialize<LicenseVM>(decodedLicenseRequest, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = true,
