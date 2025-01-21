@@ -35,6 +35,7 @@
                 <th>Module</th>
                 <th>Users Number</th>
                 <th>Expiry Date</th>
+                <th>Status</th>
                 <th>Created At</th>
                 <th></th>
             </tr>
@@ -49,6 +50,18 @@
                         <td>@license.Module</td>
                         <td>@license.NumberOfUsers</td>
                         <td>@license.ExpiryDate.ToString("dd MMM yyyy")</td>
+                        @if(license.ExpiryDate.Date > DateTime.Now.Date){
+                            <td class="text-success">Active</td>
+                        }
+                        else if (license.ExpiryDate.Date < DateTime.Now.Date)
+                        {
+                            <td class="text-danger">Expired</td>
+                        }
+                        else
+                        {
+                            <td class="text-warning">Last Day</td>
+                        }
+                        
                         <td>@license.CreationDate.ToString("dd MMM yyyy")</td>
                         <td>
                             @* <a asp-page="Details" asp-route-id="@license.Id" class="btn btn-outline-info btn-sm" title="View">
