@@ -6,11 +6,55 @@
 
 <div class="container py-5">
     <h1 class="text-center text-success">🎉 License Key Generated!</h1>
-    <div class="alert alert-primary text-center">
-        <h4>Your License Key:</h4>
-        <p class="fs-4"><strong>@Model.LicenseKey</strong></p>
+
+    <!-- License Key Display Box -->
+    <div class="alert alert-primary text-center mx-auto" style="max-width: 90%; word-break: break-word; overflow-wrap: break-word;">
+        <h4 class="mb-3">Your License Key:</h4>
+
+        <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+            <!-- License Key Box -->
+            <div id="license-key" class="fs-5 text-wrap mb-0 px-3 py-2 bg-light border rounded text-break" style="max-width: 100%;">
+                <strong>@Model.LicenseKey</strong>
+            </div>
+
+            <!-- Copy Button -->
+            <button id="copy-btn" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" onclick="copyLicenseKey()">
+                📋 <span>Copy</span>
+            </button>
+        </div>
     </div>
+
+    <!-- Generate Another License -->
     <div class="text-center mt-4">
-        <a asp-page="Licenses/LicensePage" class="btn btn-secondary">Generate Another License</a>
+        <a asp-page="/Licenses/LicensePage" class="btn btn-secondary">Generate Another License</a>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function copyLicenseKey() {
+            var licenseKeyText = document.getElementById("license-key").innerText;
+
+            if (navigator.clipboard && window.isSecureContext) {
+                // Modern approach: Clipboard API (Requires HTTPS)
+                navigator.clipboard.writeText(licenseKeyText).then(() => {
+                    showCopySuccess();
+                }).catch(err => {
+                    console.error("Copy failed using Clipboard API:", err);
+                });
+            } else {
+                // execCommand is deprecated, so we avoid using it
+                alert("Your browser does not support copying. Please copy manually.");
+            }
+        }
+
+        function showCopySuccess() {
+            var copyBtn = document.getElementById("copy-btn");
+            copyBtn.innerHTML = "✅ <span>Copied!</span>";
+            setTimeout(() => {
+                copyBtn.innerHTML = "📋 <span>Copy</span>";
+            }, 1500);
+        }
+
+    </script>
+}
