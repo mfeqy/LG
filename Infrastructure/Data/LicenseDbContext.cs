@@ -12,6 +12,7 @@ namespace Youxel.Check.LicensesGenerator.Infrastructure.Data
         }
 
         public DbSet<License> Licenses { get; set; }
+        public DbSet<AppSetting> AppSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -16,6 +16,7 @@ namespace Youxel.Check.LicensesGenerator.Infrastructure.DependencyInjection
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<ILicensesRepository, LicensesRepository>();
+            services.AddScoped<IAppSettingsRepository, AppSettingsRepository>();
             return services;
         }
 

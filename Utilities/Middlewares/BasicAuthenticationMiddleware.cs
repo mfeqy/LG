@@ -1,4 +1,7 @@
-﻿namespace Youxel.Check.LicensesGenerator.Utilities.Middlewares
+﻿using Microsoft.AspNetCore.Identity;
+using Youxel.Check.LicensesGenerator.Infrastructure.Repositories;
+
+namespace Youxel.Check.LicensesGenerator.Utilities.Middlewares
 {
     public class BasicAuthenticationMiddleware
     {
@@ -11,7 +14,7 @@
             _configuration = configuration;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IAppSettingsRepository appSettings)
         {
             string authHeader = context.Request.Headers["Authorization"]!;
 
@@ -28,9 +31,13 @@
                 string decodedUsernamePassword = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword));
                 string[] usernamePassword = decodedUsernamePassword.Split(':');
                 string username = usernamePassword[0];
-                string password = usernamePassword[1];
+                string enteredPassword = usernamePassword[1];
 
-                if (username != _configuration["Authentication:Username"] || password != _configuration["Authentication:Password"])
+                var hasher = new PasswordHasher<object>();
+                string systemPassword = appSettings.GetByKey("password");
+                var verificationResult = hasher.VerifyHashedPassword(null, systemPassword, enteredPassword);
+
+                if (username != appSettings.GetByKey("username") || verificationResult != PasswordVerificationResult.Success)
                 {
                     throw new UnauthorizedAccessException();
                 }
