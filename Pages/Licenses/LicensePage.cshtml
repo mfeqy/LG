@@ -1,4 +1,5 @@
 ﻿@page
+@using Youxel.Check.LicensesGenerator.Domain.Enums
 @model LicensePageModel
 @{
     ViewData["Title"] = "License Key Generator";
@@ -10,8 +11,8 @@
     <!-- Upload JSON File Section -->
     <div class="card shadow-sm mb-5">
         <div class="card-body">
-            <h5 class="card-title text-secondary">Step 1: Upload JSON File</h5>
-            <p class="text-muted">Please upload a valid JSON file to proceed.</p>
+            <h5 class="card-title text-secondary">Upload License Request File</h5>
+            <p class="text-muted">Please upload a valid License Request file to proceed.</p>
             <form method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3">
                 <div class="input-group">
                     <input type="file" class="form-control" id="jsonFile" name="jsonFile" accept=".lic" required />
@@ -21,100 +22,97 @@
         </div>
     </div>
 
-    @if (Model.MachineKey != null && Model.MachineKey.Count() > 0)
-    {
-        <!-- Review and Fill Details Section -->
-        <div class="card shadow-sm mb-5">
-            <div class="card-body">
-                <h5 class="card-title text-secondary">Step 2: Review and Complete Details</h5>
-                <p class="text-muted">Verify the machine details and fill in the license information below.</p>
-                <form method="post" asp-page-handler="GenerateLicense" class="d-flex flex-column gap-4">
-                    <fieldset>
-                        <legend class="text-info">Machine Info</legend>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Machine ID(s)</label>
-                                <div id="machineID-container">
-                                    @for (int i = 0; i < Model.MachineKey.Count(); i++)
-                                    {
-                                        <div class="input-group mb-2">
-                                            <input required for="MachineKey[@i]" type="text" name="MachineKey[@i]" class="form-control" value="@Model.MachineKey[i]" readonly />
-                                        </div>
-                                    }
-                                </div>
-                                <button type="button" id="add-machine-btn" class="btn btn-primary">Add Machine</button>
+    <!-- Review and Fill Details Section -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <h5 class="card-title text-secondary">License Details</h5>
+            <p class="text-muted">Verify the machine details and fill in the license information below.</p>
+            <form method="post" asp-page-handler="GenerateLicense" class="d-flex flex-column gap-4">
+                <fieldset>
+                    <legend class="text-info">Machine Info</legend>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Machine ID(s)</label>
+                            <div id="machineID-container">
+                                @for (int i = 0; i < Model.MachineKey.Count(); i++)
+                                {
+                                    <div class="input-group mb-2">
+                                        <input required for="MachineKey[@i]" type="text" name="MachineKey[@i]" class="form-control" value="@Model.MachineKey[i]" />
+                                    </div>
+                                }
                             </div>
-                            <div class="col-md-6">
-                                <label for="DatabaseName" class="form-label">Database Name</label>
-                                <input id="DatabaseName" name="DatabaseName" class="form-control" value="@Model.DatabaseName" readonly />
-                            </div>
-                            <div class="col-md-6">
-                                <label for="DatabaseServer" class="form-label">Server Name</label>
-                                <input id="DatabaseServer" name="DatabaseServer" class="form-control" value="@Model.DatabaseServer" readonly />
-                            </div>
-                            <div class="col-md-6">
-                                <label for="Module" class="form-label">Module</label>
-                                <input id="Module" name="Module" class="form-control" value="@Model.Module" readonly />
-                            </div>
+                            <button type="button" id="add-machine-btn" class="btn btn-primary">Add Machine</button>
                         </div>
-                    </fieldset>
-
-
-                    <fieldset>
-                        <legend class="text-info">License Details</legend>
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label for="CompanyName" class="form-label">Company Name</label>
-                                <input type="text" id="CompanyName" name="CompanyName" class="form-control" value="@Model.CompanyName" placeholder="Enter company name" required />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="NumberOfUsers" class="form-label">Number of Users</label>
-                                <input type="number" id="NumberOfUsers" name="NumberOfUsers" class="form-control" value="@Model.NumberOfUsers" placeholder="Enter number of users" required />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="NumberOfAdminUsers" class="form-label">Admin Users</label>
-                                <input type="number" id="NumberOfAdminUsers" name="NumberOfAdminUsers" class="form-control" value="@Model.NumberOfAdminUsers" />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="NumberOfUnitUsers" class="form-label">Unit Users</label>
-                                <input type="number" id="NumberOfUnitUsers" name="NumberOfUnitUsers" class="form-control" value="@Model.NumberOfUnitUsers" />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="NumberOfLocationUsers" class="form-label">Location Users</label>
-                                <input type="number" id="NumberOfLocationUsers" name="NumberOfLocationUsers" class="form-control" value="@Model.NumberOfLocationUsers" />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="NumberOfEndUsers" class="form-label">End Users</label>
-                                <input type="number" id="NumberOfEndUsers" name="NumberOfEndUsers" class="form-control" value="@Model.NumberOfEndUsers" />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="NumberOfLocations" class="form-label">Number of Locations</label>
-                                <input type="number" id="NumberOfLocations" name="NumberOfLocations" class="form-control" value="@Model.NumberOfLocations" />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="NumberOfAssets" class="form-label">Number of Assets</label>
-                                <input type="number" id="NumberOfAssets" name="NumberOfAssets" class="form-control" value="@Model.NumberOfAssets" />
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="ExpiryDate" class="form-label">Expiration Date</label>
-                                <input type="date" id="ExpiryDate" name="ExpiryDate" class="form-control" value="@Model.ExpiryDate" required />
-                            </div>
+                        <div class="col-md-6">
+                            <label for="DatabaseName" class="form-label">Database Name</label>
+                            <input id="DatabaseName" name="DatabaseName" class="form-control" value="@Model.DatabaseName" />
                         </div>
-                    </fieldset>
+                        <div class="col-md-6">
+                            <label for="DatabaseServer" class="form-label">Server Name</label>
+                            <input id="DatabaseServer" name="DatabaseServer" class="form-control" value="@Model.DatabaseServer" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Module" class="form-label">Module</label>
+                            <select asp-for="Module" asp-items="Html.GetEnumSelectList<LicenseModule>()" class="form-select"></select>
+                        </div>
+                    </div>
+                </fieldset>
 
-                    <button type="submit" class="btn btn-success mt-3 d-block mx-auto" style="width: 20%;">Generate Key</button>
-                </form>
-            </div>
+
+                <fieldset>
+                    <legend class="text-info">License Details</legend>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="CompanyName" class="form-label">Company Name</label>
+                            <input type="text" id="CompanyName" name="CompanyName" class="form-control" value="@Model.CompanyName" placeholder="Enter company name" required />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="NumberOfAdminUsers" class="form-label">Admin Users</label>
+                            <input type="number" id="NumberOfAdminUsers" name="NumberOfAdminUsers" class="form-control" value="@Model.NumberOfAdminUsers" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="NumberOfUnitUsers" class="form-label">Unit Users</label>
+                            <input type="number" id="NumberOfUnitUsers" name="NumberOfUnitUsers" class="form-control" value="@Model.NumberOfUnitUsers" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="NumberOfLocationUsers" class="form-label">Location Users</label>
+                            <input type="number" id="NumberOfLocationUsers" name="NumberOfLocationUsers" class="form-control" value="@Model.NumberOfLocationUsers" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="NumberOfEndUsers" class="form-label">End Users</label>
+                            <input type="number" id="NumberOfEndUsers" name="NumberOfEndUsers" class="form-control" value="@Model.NumberOfEndUsers" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="NumberOfLocations" class="form-label">Number of Locations</label>
+                            <input type="number" id="NumberOfLocations" name="NumberOfLocations" class="form-control" value="@Model.NumberOfLocations" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="NumberOfAssets" class="form-label">Number of Assets</label>
+                            <input type="number" id="NumberOfAssets" name="NumberOfAssets" class="form-control" value="@Model.NumberOfAssets" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="NumberOfUsers" class="form-label">Total Users</label>
+                            <input type="number" id="NumberOfUsers" name="NumberOfUsers" class="form-control" value="@Model.NumberOfUsers" placeholder="Enter number of users" readonly />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="ExpiryDate" class="form-label">Expiration Date</label>
+                            <input type="date" id="ExpiryDate" name="ExpiryDate" class="form-control" value="@Model.ExpiryDate" required />
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn btn-success mt-3 d-block mx-auto" style="width: 20%;">Generate Key</button>
+            </form>
         </div>
-    }
+    </div>
 
     <!-- License Key Display Section -->
     @if (TempData["LicenseKey"] != null)
@@ -131,6 +129,7 @@
         document.getElementById('add-machine-btn').addEventListener('click', function () {
             var container = document.getElementById('machineID-container');
             var index = container.children.length;
+
             var newElement = document.createElement('div');
             newElement.classList.add('input-group', 'mb-2');
             newElement.innerHTML = `<input required type="text" name="MachineKey[${index}]" class="form-control" />
@@ -139,7 +138,35 @@
         });
 
         function removeMachine(button) {
-            button.parentElement.remove();
+            var container = document.getElementById('machineID-container');
+            button.parentElement.remove(); // Remove the selected element
+
+            // Re-index remaining inputs
+            var inputs = container.querySelectorAll('.input-group input');
+            inputs.forEach((input, i) => {
+                input.name = `MachineKey[${i}]`;
+            });
         }
+
+
+        function updateTotalUsers() {
+            const adminUsers = parseInt(document.getElementById('NumberOfAdminUsers').value) || 0;
+            const unitUsers = parseInt(document.getElementById('NumberOfUnitUsers').value) || 0;
+            const locationUsers = parseInt(document.getElementById('NumberOfLocationUsers').value) || 0;
+            const endUsers = parseInt(document.getElementById('NumberOfEndUsers').value) || 0;
+
+            document.getElementById('NumberOfUsers').value = adminUsers + unitUsers + locationUsers + endUsers;
+        }
+
+        // Run updateTotalUsers when the page loads to ensure it starts with the correct value
+        document.addEventListener('DOMContentLoaded', function () {
+            updateTotalUsers();
+        });
+
+        // Attach event listeners to all input fields related to user counts
+        document.getElementById('NumberOfAdminUsers').addEventListener('input', updateTotalUsers);
+        document.getElementById('NumberOfUnitUsers').addEventListener('input', updateTotalUsers);
+        document.getElementById('NumberOfLocationUsers').addEventListener('input', updateTotalUsers);
+        document.getElementById('NumberOfEndUsers').addEventListener('input', updateTotalUsers);
     </script>
 }

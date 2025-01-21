@@ -18,6 +18,21 @@
         <small class="text-muted">License Key is read-only and cannot be modified.</small>
     </div>
 
+    <!-- Machine Key Section -->
+    <div class="mb-3">
+        <label class="form-label">Machine Key(s)</label>
+        <div id="machineID-container">
+            @for (int i = 0; i < Model.License.MachineKey.Count(); i++)
+            {
+                <div class="input-group mb-2">
+                    <input required type="text" name="MachineKey[@i]" class="form-control" value="@Model.License.MachineKey[i]" />
+                    <button type="button" class="btn btn-danger remove-btn" onclick="removeMachine(this)">Remove</button>
+                </div>
+            }
+        </div>
+        <button type="button" id="add-machine-btn" class="btn btn-primary mt-2">Add Machine</button>
+    </div>
+
     <div class="row">
         <!-- Company Name -->
         <div class="col-md-3 mb-3">
@@ -39,10 +54,9 @@
 
         <div class="col-md-3">
             <label class="form-label">Total Users</label>
-            <input asp-for="License.NumberOfUsers" type="number" class="form-control" required />
+            <input asp-for="License.NumberOfUsers" type="number" class="form-control" readonly />
         </div>
     </div>
-
 
     <!-- Users Section -->
     <div class="row">
@@ -83,11 +97,6 @@
         </div>
     </div>
 
-    <!-- Machine Key (Array) -->
-    <div class="mb-3">
-        <label class="form-label">Machine Key(s)</label>
-        <textarea asp-for="MachineKeyString" class="form-control" rows="3" placeholder="Enter Machine Keys, separated by commas"></textarea>
-    </div>
 
     <!-- Buttons -->
     <div class="mt-4">
@@ -95,3 +104,49 @@
         <a asp-page="Index" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
+
+@section Scripts {
+    <script>
+        document.getElementById('add-machine-btn').addEventListener('click', function () {
+            var container = document.getElementById('machineID-container');
+            var index = container.children.length;
+
+            var newElement = document.createElement('div');
+            newElement.classList.add('input-group', 'mb-2');
+            newElement.innerHTML = `<input required type="text" name="MachineKey[${index}]" class="form-control" />
+                                    <button type="button" class="btn btn-danger remove-btn" onclick="removeMachine(this)">Remove</button>`;
+            container.appendChild(newElement);
+        });
+
+        function removeMachine(button) {
+            var container = document.getElementById('machineID-container');
+            button.parentElement.remove(); // Remove selected machine key input
+
+            // Re-index all machine key inputs
+            var inputs = container.querySelectorAll('.input-group input');
+            inputs.forEach((input, i) => {
+                input.name = `MachineKey[${i}]`;
+            });
+        }
+
+        function updateTotalUsers() {
+            const adminUsers = parseInt(document.querySelector("[name='License.NumberOfAdminUsers']").value) || 0;
+            const unitUsers = parseInt(document.querySelector("[name='License.NumberOfUnitUsers']").value) || 0;
+            const locationUsers = parseInt(document.querySelector("[name='License.NumberOfLocationUsers']").value) || 0;
+            const endUsers = parseInt(document.querySelector("[name='License.NumberOfEndUsers']").value) || 0;
+
+            document.querySelector("[name='License.NumberOfUsers']").value = adminUsers + unitUsers + locationUsers + endUsers;
+        }
+
+        // Run updateTotalUsers when the page loads to ensure it starts with the correct value
+        document.addEventListener('DOMContentLoaded', function () {
+            updateTotalUsers();
+        });
+
+        // Attach event listeners to all input fields related to user counts
+        document.querySelector("[name='License.NumberOfAdminUsers']").addEventListener('input', updateTotalUsers);
+        document.querySelector("[name='License.NumberOfUnitUsers']").addEventListener('input', updateTotalUsers);
+        document.querySelector("[name='License.NumberOfLocationUsers']").addEventListener('input', updateTotalUsers);
+        document.querySelector("[name='License.NumberOfEndUsers']").addEventListener('input', updateTotalUsers);
+    </script>
+}

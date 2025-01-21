@@ -10,10 +10,10 @@ using Youxel.Check.LicensesGenerator.Utilities.Helpers;
 
 namespace Youxel.Check.LicensesGenerator.Pages.Licenses
 {
-
     public class LicensePageModel : PageModel
     {
         private readonly ILicensesRepository _licenseRepository;
+
         public LicensePageModel(ILicensesRepository licenseRepository)
         {
             _licenseRepository = licenseRepository;
@@ -26,19 +26,22 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
         public string CompanyName { get; set; } = string.Empty;
 
         [BindProperty]
-        public int? NumberOfAdminUsers { get; set; }
+        public int? NumberOfAdminUsers { get; set; } = 0;
 
         [BindProperty]
-        public int? NumberOfUnitUsers { get; set; }
+        public int? NumberOfUnitUsers { get; set; } = 0;
 
         [BindProperty]
-        public int? NumberOfLocationUsers { get; set; }
+        public int? NumberOfLocationUsers { get; set; } = 0;
 
         [BindProperty]
-        public int? NumberOfEndUsers { get; set; }
+        public int? NumberOfEndUsers { get; set; } = 0;
 
-        [BindProperty]
-        public int NumberOfUsers { get; set; }
+        public int NumberOfUsers =>
+            (NumberOfAdminUsers ?? 0) +
+            (NumberOfUnitUsers ?? 0) +
+            (NumberOfLocationUsers ?? 0) +
+            (NumberOfEndUsers ?? 0);
 
         [BindProperty]
         public int NumberOfLocations { get; set; }
@@ -102,7 +105,7 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
                 NumberOfUnitUsers = NumberOfUnitUsers,
                 NumberOfLocationUsers = NumberOfLocationUsers,
                 NumberOfEndUsers = NumberOfEndUsers,
-                NumberOfUsers = NumberOfUsers,
+                NumberOfUsers = NumberOfUsers,  // This is now dynamically calculated
                 NumberOfLocations = NumberOfLocations,
                 NumberOfAssets = NumberOfAssets,
                 ExpiryDate = ExpiryDate,
