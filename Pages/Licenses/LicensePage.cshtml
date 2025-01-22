@@ -37,18 +37,18 @@
                                 @for (int i = 0; i < Model.MachineKey.Count(); i++)
                                 {
                                     <div class="input-group mb-2">
-                                        <input required for="MachineKey[@i]" type="text" name="MachineKey[@i]" class="form-control" value="@Model.MachineKey[i]" />
+                                        <input required asp-for="MachineKey[@i]" type="text" name="MachineKey[@i]" class="form-control" value="@Model.MachineKey[i]" />
                                     </div>
                                 }
                             </div>
                             <button type="button" id="add-machine-btn" class="btn btn-primary">Add Machine</button>
                         </div>
                         <div class="col-md-6">
-                            <label for="DatabaseName" class="form-label">Database Name</label>
+                            <label asp-for="DatabaseName" class="form-label">Database Name</label>
                             <input id="DatabaseName" name="DatabaseName" class="form-control" value="@Model.DatabaseName" />
                         </div>
                         <div class="col-md-6">
-                            <label for="DatabaseServer" class="form-label">Server Name</label>
+                            <label asp-for="DatabaseServer" class="form-label">Server Name</label>
                             <input id="DatabaseServer" name="DatabaseServer" class="form-control" value="@Model.DatabaseServer" />
                         </div>
                         <div class="col-md-6">
@@ -63,47 +63,47 @@
                     <legend class="text-info">License Details</legend>
                     <div class="row g-3">
                         <div class="col-md-3">
-                            <label for="CompanyName" class="form-label">Company Name</label>
+                            <label asp-for="CompanyName" class="form-label">Company Name</label>
                             <input type="text" id="CompanyName" name="CompanyName" class="form-control" value="@Model.CompanyName" placeholder="Enter company name" required />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="NumberOfAdminUsers" class="form-label">Admin Users</label>
+                            <label asp-for="NumberOfAdminUsers" class="form-label">Admin Users</label>
                             <input type="number" id="NumberOfAdminUsers" name="NumberOfAdminUsers" class="form-control" value="@Model.NumberOfAdminUsers" />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="NumberOfUnitUsers" class="form-label">Unit Users</label>
+                            <label asp-for="NumberOfUnitUsers" class="form-label">Unit Users</label>
                             <input type="number" id="NumberOfUnitUsers" name="NumberOfUnitUsers" class="form-control" value="@Model.NumberOfUnitUsers" />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="NumberOfLocationUsers" class="form-label">Location Users</label>
+                            <label asp-for="NumberOfLocationUsers" class="form-label">Location Users</label>
                             <input type="number" id="NumberOfLocationUsers" name="NumberOfLocationUsers" class="form-control" value="@Model.NumberOfLocationUsers" />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="NumberOfEndUsers" class="form-label">End Users</label>
+                            <label asp-for="NumberOfEndUsers" class="form-label">End Users</label>
                             <input type="number" id="NumberOfEndUsers" name="NumberOfEndUsers" class="form-control" value="@Model.NumberOfEndUsers" />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="NumberOfLocations" class="form-label">Number of Locations</label>
+                            <label asp-for="NumberOfLocations" class="form-label">Number of Locations</label>
                             <input type="number" id="NumberOfLocations" name="NumberOfLocations" class="form-control" value="@Model.NumberOfLocations" />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="NumberOfAssets" class="form-label">Number of Assets</label>
+                            <label asp-for="NumberOfAssets" class="form-label">Number of Assets</label>
                             <input type="number" id="NumberOfAssets" name="NumberOfAssets" class="form-control" value="@Model.NumberOfAssets" />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="NumberOfUsers" class="form-label">Total Users</label>
+                            <label asp-for="NumberOfUsers" class="form-label">Total Users</label>
                             <input type="number" id="NumberOfUsers" name="NumberOfUsers" class="form-control" value="@Model.NumberOfUsers" placeholder="Enter number of users" readonly />
                         </div>
 
                         <div class="col-md-3">
-                            <label for="ExpiryDate" class="form-label">Expiration Date</label>
+                            <label asp-for="ExpiryDate" class="form-label">Expiration Date</label>
                             <input type="date" id="ExpiryDate" name="ExpiryDate" class="form-control" value="@Model.ExpiryDate" required />
                         </div>
                     </div>

@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Youxel.Check.LicensesGenerator.Domain.Entities;
+using Youxel.Check.LicensesGenerator.Domain.Models;
 using Youxel.Check.LicensesGenerator.Infrastructure.Repositories;
+using Youxel.Check.LicensesGenerator.Utilities.Helpers;
 
 namespace Youxel.Check.LicensesGenerator.Pages.Licenses
 {
@@ -18,18 +20,12 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
         [BindProperty]
         public License License { get; set; }
 
-        [BindProperty]
-        public string MachineKeyString { get; set; } // Stores the array as a string
-
         public IActionResult OnGetAsync(Guid id)
         {
             License = _licensesRepository.GetLicenseById(id);
 
             if (License == null)
                 return NotFound();
-
-            // Convert MachineKey array to a comma-separated string for UI display
-            MachineKeyString = string.Join(", ", License.MachineKey);
 
             return Page();
         }
@@ -38,14 +34,33 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
         {
             if (!ModelState.IsValid)
                 return Page();
-            // Convert MachineKey string back into an array
-            License.MachineKey = MachineKeyString.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                                    .Select(x => x.Trim()).ToArray();
+
+            var licenseVm = new LicenseVM
+            {
+                Module = License.Module,
+                CompanyName = License.CompanyName,
+                NumberOfAdminUsers = License.NumberOfAdminUsers,
+                NumberOfUnitUsers = License.NumberOfUnitUsers,
+                NumberOfLocationUsers = License.NumberOfLocationUsers,
+                NumberOfEndUsers = License.NumberOfEndUsers,
+                NumberOfUsers = License.NumberOfUsers,  // This is now dynamically calculated
+                NumberOfLocations = License.NumberOfLocations,
+                NumberOfAssets = License.NumberOfAssets,
+                ExpiryDate = License.ExpiryDate.ToString(),
+                DatabaseServer = License.DatabaseServer,
+                DatabaseName = License.DatabaseName,
+                CreationDate = DateTime.Now,
+                MachineKey = License.MachineKey
+            };
+
+            var licenseJson = JsonSerializer.Serialize(licenseVm);
+            var licenseKey = LicenseHelper.GenerateLicenseKey(licenseJson);
+            License.LicenseKey = licenseKey;
 
             _licensesRepository.UpdateLicense(License);
-            
 
-            return RedirectToPage("Index");
+
+            return RedirectToPage("LicenseResult", new { licenseKey });
         }
     }
 }
