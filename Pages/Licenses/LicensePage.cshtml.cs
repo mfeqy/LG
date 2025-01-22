@@ -61,6 +61,44 @@ namespace Youxel.Check.LicensesGenerator.Pages.Licenses
         [BindProperty]
         public string[] MachineKey { get; set; } = Array.Empty<string>();
 
+        public IActionResult OnGet(
+            LicenseModule module,
+            string companyName,
+            int? numberOfAdminUsers,
+            int? numberOfUnitUsers,
+            int? numberOfLocationUsers,
+            int? numberOfEndUsers,
+            int numberOfLocations,
+            int numberOfAssets,
+            string expiryDate,
+            string databaseServer,
+            string databaseName,
+            string machineKey)
+        {
+            if (string.IsNullOrEmpty(companyName))
+                return Page();
+
+            Module = module;
+            CompanyName = companyName;
+            NumberOfAdminUsers = numberOfAdminUsers;
+            NumberOfUnitUsers = numberOfUnitUsers;
+            NumberOfLocationUsers = numberOfLocationUsers;
+            NumberOfEndUsers = numberOfEndUsers;
+            NumberOfLocations = numberOfLocations;
+            NumberOfAssets = numberOfAssets;
+            ExpiryDate = expiryDate;
+            DatabaseServer = databaseServer;
+            DatabaseName = databaseName;
+
+            // Convert MachineKey string back to array
+            this.MachineKey = !string.IsNullOrEmpty(machineKey)
+                ? machineKey.Split(',')
+                : Array.Empty<string>();
+
+            return Page();
+        }
+
+
         public async Task<IActionResult> OnPostAsync(IFormFile jsonFile)
         {
             if (jsonFile == null || jsonFile.Length == 0)

@@ -70,7 +70,20 @@
                             <a asp-page="Edit" asp-route-id="@license.Id" class="btn btn-outline-warning btn-sm" title="Edit">
                                 <i class="bi bi-pen"></i>
                             </a>
-                            <a asp-page="Delete" asp-route-id="@license.Id" class="btn btn-outline-primary btn-sm" title="Renew">
+                            <a asp-page="LicensePage"
+                               asp-route-module="@license.Module"
+                               asp-route-companyName="@license.CompanyName"
+                               asp-route-numberOfAdminUsers="@license.NumberOfAdminUsers"
+                               asp-route-numberOfUnitUsers="@license.NumberOfUnitUsers"
+                               asp-route-numberOfLocationUsers="@license.NumberOfLocationUsers"
+                               asp-route-numberOfEndUsers="@license.NumberOfEndUsers"
+                               asp-route-numberOfLocations="@license.NumberOfLocations"
+                               asp-route-numberOfAssets="@license.NumberOfAssets"
+                               asp-route-expiryDate="@license.ExpiryDate.ToString("yyyy-MM-dd")"
+                               asp-route-databaseServer="@license.DatabaseServer"
+                               asp-route-databaseName="@license.DatabaseName"
+                               asp-route-machineKey="@string.Join(",", license.MachineKey)"
+                               class="btn btn-outline-primary btn-sm" title="Renew">
                                 <i class="bi bi-arrow-clockwise"></i>
                             </a>
                         </td>
