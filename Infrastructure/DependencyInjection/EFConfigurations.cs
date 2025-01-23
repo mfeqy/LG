@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Youxel.Check.LicensesGenerator.Domain.Consts;
 using Youxel.Check.LicensesGenerator.Infrastructure.Data;
 using Youxel.Check.LicensesGenerator.Infrastructure.DependencyInjection;
 using Youxel.Check.LicensesGenerator.Infrastructure.Repositories;
@@ -26,6 +27,7 @@ namespace Youxel.Check.LicensesGenerator.Infrastructure.DependencyInjection
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<LicenseDbContext>();
                 await dbContext.Database.MigrateAsync();
+                Constants.PrivateKey = dbContext.AppSettings.FirstOrDefault(s => s.Key == "PrivateKey").Value;
             }
             return app;
         }

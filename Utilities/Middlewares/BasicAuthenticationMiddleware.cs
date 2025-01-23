@@ -65,5 +65,4 @@ namespace Youxel.Check.LicensesGenerator.Utilities.Middlewares
             await context.Response.WriteAsync("Authentication is required.");
         }
     }
-
 }
